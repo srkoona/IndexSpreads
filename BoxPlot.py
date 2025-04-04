@@ -2,14 +2,13 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 import requests
-import openpyxl
 from io import BytesIO
 
 st.set_page_config(page_title="Debt Comps", 
                    page_icon=":chart_increasing:", 
                    layout="wide")
 
-excel_file = r"https://github.com/srkoona/IndexSpreads/raw/refs/heads/main/OAS%20Spread.xlsx"
+excel_file = r"OAS Spread.xlsx"
 
 def getdata_excel():
     df = pd.read_excel(
@@ -20,9 +19,7 @@ def getdata_excel():
         usecols="E:AR",
         nrows=52
     )
-
     return df
-
 
 df = getdata_excel()
 df = df.T
@@ -30,14 +27,15 @@ df.columns = df.iloc[0]
 df = df.drop(df.index[0])
 df = df.reset_index(drop=True)
 df = df.drop('Symbol', axis=1)
-df.head()
-
-df.columns.tolist()
 
 #===========SIDEBAR SECTION===========
-
 st.sidebar.header("Choose Timeframe")
 
+# Add page selection to sidebar
+page = st.sidebar.selectbox(
+    "Select Index",
+    ["Main Indices", "Ratings", "Major Sub-Industries", "Minor Sub-Industries"]
+)
 
 offsetA, offsetB = st.sidebar.slider(
     "Offset",
@@ -49,89 +47,138 @@ offsetA, offsetB = st.sidebar.slider(
 
 df_selection = df.query( 
     "(Offset >= @offsetA) & (Offset <= @offsetB)"
-    
 )
 
-st.dataframe(df_selection)
+# Get row 1 values for reference lines
+row1_main = df_selection.iloc[0, 1:8]
+row1_ratings = df_selection.iloc[0, 8:13]
+row1_major = df_selection.iloc[0, 13:36]
+row1_minor = df_selection.iloc[0, 36:51]
 
-#===============MAINPAGE=====================
+if page == "Main Indices":
+    st.title("Main Indices")
+    main_indices = df_selection.iloc[:, 1:8]
+    
+    # Create three columns
+    col1, col2, col3 = st.columns(3)
+    
+    # Create a cycle of columns to iterate through
+    columns = [col1, col2, col3]
+    col_idx = 0
+    
+    # Create individual plots for each column
+    for col, value in zip(main_indices.columns, row1_main):
+        # Select which streamlit column to put the plot in
+        with columns[col_idx]:
+            fig = px.box(data_frame=main_indices, 
+                        y=col,
+                        title=f"Box Plot for {col}",
+                        template="plotly_white",
+                        points="outliers")
+            
+            # Add reference line for row 1 value
+            fig.add_hline(y=value, line_dash="dash", line_color="red")
+            
+            fig.update_layout(showlegend=False,
+                            height=400,
+                            width=400,
+                            xaxis_title=None,
+                            yaxis_title=None)
+            
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Move to next column, wrap around to first column if needed
+        col_idx = (col_idx + 1) % 3
 
-st.title("Index Spreads")
-st.markdown("##")
+elif page == "Ratings":
+    st.title("Ratings")
+    ratings = df_selection.iloc[:, 8:13]
+    
+    # Create three columns
+    col1, col2, col3 = st.columns(3)
+    columns = [col1, col2, col3]
+    col_idx = 0
+    
+    for col, value in zip(ratings.columns, row1_ratings):
+        with columns[col_idx]:
+            fig = px.box(data_frame=ratings, 
+                        y=col,
+                        title=f"Box Plot for {col}",
+                        template="plotly_white",
+                        points="outliers")
+            
+            fig.add_hline(y=value, line_dash="dash", line_color="red")
+            
+            fig.update_layout(showlegend=False,
+                            height=400,
+                            width=400,
+                            xaxis_title=None,
+                            yaxis_title=None)
+            
+            st.plotly_chart(fig, use_container_width=True)
+        
+        col_idx = (col_idx + 1) % 3
+    
 
-#=============Box Plots===============
+elif page == "Major Sub-Industries":
+    st.title("Major Sub-Industries")
+    major_industries = df_selection.iloc[:, 13:36]
+    
+    # Create three columns
+    col1, col2, col3 = st.columns(3)
+    columns = [col1, col2, col3]
+    col_idx = 0
+    
+    for col, value in zip(major_industries.columns, row1_major):
+        with columns[col_idx]:
+            fig = px.box(data_frame=major_industries, 
+                        y=col,
+                        title=f"Box Plot for {col}",
+                        template="plotly_white",
+                        points="outliers")
+            
+            fig.add_hline(y=value, line_dash="dash", line_color="red")
+            
+            fig.update_layout(showlegend=False,
+                            height=400,
+                            width=400,
+                            xaxis_title=None,
+                            yaxis_title=None)
+            
+            st.plotly_chart(fig, use_container_width=True)
+        
+        col_idx = (col_idx + 1) % 3
+    
 
-# Create figure with subplots
-fig = px.box()
-
-# Plot 1: Main Indices (columns 1-8)
-main_indices = df_selection.iloc[:, 1:8]
-fig1 = px.box(data_frame=main_indices, 
-              title="Main Indices",
-              template="plotly_white",
-              points="outliers",
-              labels={"value": "", "variable": ""})
-fig1.update_traces(q1=main_indices.quantile(0.2),
-                   q3=main_indices.quantile(0.8))
-fig1.update_layout(showlegend=False,
-                  height=400,
-                  width=800,
-                  xaxis_title=None,
-                  yaxis_title=None)
-
-# Plot 2: Ratings (columns 9-13)
-ratings = df_selection.iloc[:, 8:13]
-fig2 = px.box(data_frame=ratings,
-              title="Ratings",
-              template="plotly_white",
-              points="outliers",
-              labels={"value": "", "variable": ""})
-fig2.update_traces(q1=ratings.quantile(0.2),
-                   q3=ratings.quantile(0.8))
-fig2.update_layout(showlegend=False,
-                  height=400,
-                  width=800,
-                  xaxis_title=None,
-                  yaxis_title=None)
-
-# Plot 3: Major sub-industries (columns 14-36)
-major_industries = df_selection.iloc[:, 13:36]
-fig3 = px.box(data_frame=major_industries,
-              title="Major sub-industries",
-              template="plotly_white",
-              points="outliers",
-              labels={"value": "", "variable": ""})
-fig3.update_traces(q1=major_industries.quantile(0.2),
-                   q3=major_industries.quantile(0.8))
-fig3.update_layout(showlegend=False,
-                  height=400,
-                  width=800,
-                  xaxis_title=None,
-                  yaxis_title=None)
-
-# Plot 4: Minor sub-industries (columns 37-51)
-minor_industries = df_selection.iloc[:, 36:51]
-fig4 = px.box(data_frame=minor_industries,
-              title="Minor sub-industries",
-              template="plotly_white",
-              points="outliers",
-              labels={"value": "", "variable": ""})
-fig4.update_traces(q1=minor_industries.quantile(0.2),
-                   q3=minor_industries.quantile(0.8))
-fig4.update_layout(showlegend=False,
-                  height=400,
-                  width=800,
-                  xaxis_title=None,
-                  yaxis_title=None)
-
-# Display plots in 2x2 grid using streamlit columns
-col1, col2 = st.columns(2)
-with col1:
-    st.plotly_chart(fig1, use_container_width=True)
-    st.plotly_chart(fig3, use_container_width=True)
-with col2:
-    st.plotly_chart(fig2, use_container_width=True)
-    st.plotly_chart(fig4, use_container_width=True)
+else:  # Minor Sub-Industries
+    st.title("Minor Sub-Industries")
+    minor_industries = df_selection.iloc[:, 36:51]
+    
+    # Create three columns
+    col1, col2, col3 = st.columns(3)
+    columns = [col1, col2, col3]
+    col_idx = 0
+    
+    for col, value in zip(minor_industries.columns, row1_minor):
+        with columns[col_idx]:
+            fig = px.box(data_frame=minor_industries, 
+                        y=col,
+                        title=f"Box Plot for {col}",
+                        template="plotly_white",
+                        points="outliers")
+            
+            fig.add_hline(y=value, line_dash="dash", line_color="red")
+            
+            fig.update_layout(showlegend=False,
+                            height=400,
+                            width=400,
+                            xaxis_title=None,
+                            yaxis_title=None)
+            
+            st.plotly_chart(fig, use_container_width=True)
+        
+        col_idx = (col_idx + 1) % 3
+    
 
 
 
