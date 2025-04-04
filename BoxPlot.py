@@ -29,7 +29,7 @@ df = df.reset_index(drop=True)
 df = df.drop('Symbol', axis=1)
 
 #===========SIDEBAR SECTION===========
-st.sidebar.header("Choose Timeframe")
+st.sidebar.header("Index Spreads")
 
 # Add page selection to sidebar
 page = st.sidebar.selectbox(
@@ -38,7 +38,7 @@ page = st.sidebar.selectbox(
 )
 
 offsetA, offsetB = st.sidebar.slider(
-    "Offset",
+    "Choose timeframe offset",
     min_value = df["Offset"].min(),
     max_value = df["Offset"].max(),
     value=(0, 36),
