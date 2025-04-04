@@ -1,8 +1,6 @@
 import pandas as pd
-import plotly
 import plotly.express as px
 import streamlit as st
-import requests
 
 st.set_page_config(page_title="Debt Comps", 
                    page_icon=":chart_increasing:", 
