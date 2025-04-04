@@ -72,7 +72,7 @@ if page == "Main Indices":
         with columns[col_idx]:
             fig = px.box(data_frame=main_indices, 
                         y=col,
-                        title=f"Box Plot for {col}",
+                        title=f"{col}",
                         template="plotly_white",
                         points="outliers")
             
@@ -103,7 +103,7 @@ elif page == "Ratings":
         with columns[col_idx]:
             fig = px.box(data_frame=ratings, 
                         y=col,
-                        title=f"Box Plot for {col}",
+                        title=f"{col}",
                         template="plotly_white",
                         points="outliers")
             
@@ -133,7 +133,7 @@ elif page == "Major Sub-Industries":
         with columns[col_idx]:
             fig = px.box(data_frame=major_industries, 
                         y=col,
-                        title=f"Box Plot for {col}",
+                        title=f"{col}",
                         template="plotly_white",
                         points="outliers")
             
@@ -163,7 +163,7 @@ else:  # Minor Sub-Industries
         with columns[col_idx]:
             fig = px.box(data_frame=minor_industries, 
                         y=col,
-                        title=f"Box Plot for {col}",
+                        title=f"{col}",
                         template="plotly_white",
                         points="outliers")
             
