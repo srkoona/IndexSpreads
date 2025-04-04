@@ -8,7 +8,7 @@ st.set_page_config(page_title="Debt Comps",
                    page_icon=":chart_increasing:", 
                    layout="wide")
 
-excel_file = r"OAS Spread.xlsx"
+excel_file = r"https://github.com/srkoona/IndexSpreads/raw/refs/heads/main/OAS%20Spread.xlsx"
 
 def getdata_excel():
     df = pd.read_excel(
