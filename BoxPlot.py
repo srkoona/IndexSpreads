@@ -39,7 +39,7 @@ page = st.sidebar.selectbox(
 )
 
 offsetA, offsetB = st.sidebar.slider(
-    "Offset",
+    "Offset (in months)",
     min_value = df["Offset"].min(),
     max_value = df["Offset"].max(),
     value=(0, 36),
