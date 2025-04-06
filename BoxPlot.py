@@ -30,6 +30,7 @@ df = df.drop('Symbol', axis=1)
 
 #===========SIDEBAR SECTION===========
 st.sidebar.header("Index Spreads")
+st.sidebar.write("As on 04/04/25")
 
 # Add page selection to sidebar
 page = st.sidebar.selectbox(
