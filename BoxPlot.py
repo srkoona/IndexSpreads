@@ -30,7 +30,7 @@ df = df.drop('Symbol', axis=1)
 
 #===========SIDEBAR SECTION===========
 st.sidebar.header("Choose Timeframe")
-st.sidebar.write("As on 04/04/25")
+st.sidebar.write("As on 04/08/25")
 
 # Add page selection to sidebar
 page = st.sidebar.selectbox(
