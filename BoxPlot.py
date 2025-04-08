@@ -16,7 +16,7 @@ def getdata_excel():
         engine = "openpyxl",
         sheet_name= "Datasheet",
         skiprows=1,
-        usecols="E:AR",
+        usecols="E:DD",
         nrows=52
     )
     return df
@@ -27,10 +27,11 @@ df.columns = df.iloc[0]
 df = df.drop(df.index[0])
 df = df.reset_index(drop=True)
 df = df.drop('Symbol', axis=1)
+df.head()
 
 #===========SIDEBAR SECTION===========
-st.sidebar.header("Choose Timeframe")
-st.sidebar.write("As on 04/08/25")
+st.sidebar.header("Index Spreads Comparison")
+st.sidebar.write("As on 04/04/25")
 
 # Add page selection to sidebar
 page = st.sidebar.selectbox(
@@ -39,10 +40,10 @@ page = st.sidebar.selectbox(
 )
 
 offsetA, offsetB = st.sidebar.slider(
-    "Offset (in months)",
+    "Choose offset (in weeks)",
     min_value = df["Offset"].min(),
     max_value = df["Offset"].max(),
-    value=(0, 36),
+    value=(0, 100),
     step = 1
 )
 
@@ -173,7 +174,6 @@ else:  # Minor Sub-Industries
             st.plotly_chart(fig, use_container_width=True)
         
         col_idx = (col_idx + 1) % 3
-    
 
 
 
