@@ -31,7 +31,7 @@ df.head()
 
 #===========SIDEBAR SECTION===========
 st.sidebar.header("Index Spreads Comparison")
-st.sidebar.write("As on 04/04/25")
+st.sidebar.write("As on 10/04/25")
 
 # Add page selection to sidebar
 page = st.sidebar.selectbox(
