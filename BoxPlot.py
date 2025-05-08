@@ -70,8 +70,8 @@ if page == "Main Indices":
                           y=col,
                           title=f"{col}",
                           template="plotly_white",
-                          points="outliers",  # Show outlier points
-                          box=True)  # Show box plot inside violin
+                          points="outliers",  
+                          box=True)  
           
             fig.add_hline(y=value, line_dash="dash", line_color="red")
             
