@@ -51,7 +51,6 @@ df_selection = df.query(
     "(Offset >= @offsetA) & (Offset <= @offsetB)"
 )
 
-# Get row 1 values for reference lines
 row1_main = df_selection.iloc[0, 1:8]
 row1_ratings = df_selection.iloc[0, 8:13]
 row1_major = df_selection.iloc[0, 13:36]
@@ -60,8 +59,7 @@ row1_minor = df_selection.iloc[0, 36:51]
 if page == "Main Indices":
     st.title("Main Indices")
     main_indices = df_selection.iloc[:, 1:8]
-    
-    # Create three columns
+   
     col1, col2, col3 = st.columns(3)
     columns = [col1, col2, col3]
     col_idx = 0
@@ -74,8 +72,7 @@ if page == "Main Indices":
                           template="plotly_white",
                           points="outliers",  # Show outlier points
                           box=True)  # Show box plot inside violin
-            
-            # Add reference line for row 1 value
+          
             fig.add_hline(y=value, line_dash="dash", line_color="red")
             
             fig.update_layout(showlegend=False,
